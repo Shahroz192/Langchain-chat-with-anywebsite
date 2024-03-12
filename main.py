@@ -12,10 +12,7 @@ repo_id = "mistralai/Mistral-7B-v0.1"
 # Set up Hugging Face LLM
 def get_llm(api_token):
     return HuggingFaceEndpoint(
-        repo_id=repo_id,
-        max_length=128,
-        temperature=0.5,
-        token=api_token
+        repo_id=repo_id, max_length=128, temperature=0.5, token=api_token
     )
 
 
@@ -55,7 +52,9 @@ def get_answer(query, docsearch, llm):
 def app():
     st.set_page_config(page_title="Website Chat", page_icon=":robot_face:")
     st.title("Chat with Website")
-    api_token = st.sidebar.text_input("Enter your Hugging Face API token", type="password")
+    api_token = st.sidebar.text_input(
+        "Enter your Hugging Face API token", type="password"
+    )
     if api_token:
         llm = get_llm(api_token)
         link = st.sidebar.text_input("Enter website URL")
