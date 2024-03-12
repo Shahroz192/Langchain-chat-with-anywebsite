@@ -21,11 +21,11 @@ Website Chat is a Streamlit application that allows you to ask questions about a
 
 1. Clone the repository:
 ```
-git clone https://github.com/yourusername/website-chat.git
+git clone https://github.com/Shahroz192/chat-with-website.git
 ```
 2. Install the required packages:
 ```
-pip install streamlit langchain langchain-community
+pip install requirements.txt
 ```
 3. Obtain a Hugging Face API token from the [Hugging Face website](https://huggingface.co/settings/tokens) and provide it as an input in the Streamlit app.
 
