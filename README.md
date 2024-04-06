@@ -42,8 +42,8 @@ pip install -r requirements.txt
 ```
 streamlit run app.py
 ```
-2. Enter your Hugging Face API token in the sidebar.
-3. Enter the URL of the website you want to ask questions about.
+2. Enter your Hugging Face API token in the .env file.
+3. Enter the URL of the website you want to ask questions about in sidebar.
 4. Ask a question about the website in the input field.
 5. The app will display the answer based on the information available on the website.
 
