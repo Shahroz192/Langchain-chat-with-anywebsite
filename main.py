@@ -1,10 +1,14 @@
 from langchain_community.llms import HuggingFaceEndpoint
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
-from langchain.document_loaders import WebBaseLoader
+from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import streamlit as st
+from getpass import getpass
+
+
+HUGGINGFACEHUB_API_TOKEN=getpass()
 
 repo_id = "mistralai/Mistral-7B-v0.1"
 
@@ -52,11 +56,8 @@ def get_answer(query, docsearch, llm):
 def app():
     st.set_page_config(page_title="Website Chat", page_icon=":robot_face:")
     st.title("Chat with Website")
-    api_token = st.sidebar.text_input(
-        "Enter your Hugging Face API token", type="password"
-    )
-    if api_token:
-        llm = get_llm(api_token)
+    if HUGGINGFACEHUB_API_TOKEN:
+        llm = get_llm(HUGGINGFACEHUB_API_TOKEN)
         link = st.sidebar.text_input("Enter website URL")
         if link:
             try:
@@ -73,8 +74,7 @@ def app():
         else:
             st.warning("Please enter a valid website URL.")
     else:
-        st.warning("Please enter your Hugging Face API token.")
-
+        st.warning("Please provide a valid Hugging Face API token.")
 
 if __name__ == "__main__":
     app()
