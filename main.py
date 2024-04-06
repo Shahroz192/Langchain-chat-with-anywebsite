@@ -16,7 +16,7 @@ repo_id = "mistralai/Mistral-7B-v0.1"
 # Set up Hugging Face LLM
 def get_llm(api_token):
     return HuggingFaceEndpoint(
-        repo_id=repo_id, max_length=128, temperature=0.5, token=api_token
+        repo_id=repo_id, temperature=0.5, token=api_token
     )
 
 
@@ -68,7 +68,7 @@ def app():
                 query = st.text_input("Enter your question:")
                 if query:
                     answer = get_answer(query, docsearch, llm)
-                    st.success(answer)
+                    st.write(answer)
             except Exception as e:
                 st.error(f"An error occurred: {e}")
         else:
