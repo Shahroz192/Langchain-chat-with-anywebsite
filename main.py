@@ -1,4 +1,4 @@
-from langchain_community.llms.huggingface_endpoint import HuggingFaceEndpoint
+from langchain_community.llms import HuggingFaceEndpoint
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import WebBaseLoader

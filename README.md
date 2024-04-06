@@ -2,6 +2,13 @@
 
 Website Chat is a Streamlit application that allows you to ask questions about a website and get answers based on the information available on the website. It uses Hugging Face's Mistral-7B-v0.1 language model for question-answering and FAISS for document embedding and retrieval.
 
+
+## Why I Built This Project
+
+As the amount of information available on the internet continues to grow, it becomes increasingly challenging to find relevant and accurate information quickly. Large Language Models (LLMs) like the one used in this application are typically trained on historical data, which means they may not have access to the latest, up-to-date information available on websites.
+
+By combining the power of LLMs with the ability to extract and process information directly from websites in real-time, this application ensures that the answers provided are not only accurate but also reflect the most recent updates and changes to the website's content. This is particularly valuable for websites that are frequently updated or contain time-sensitive information, such as news portals, product catalogs, or government websites.
+
 ## Features
 
 - Extract information from a given website URL
