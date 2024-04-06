@@ -32,7 +32,7 @@ git clone https://github.com/Shahroz192/chat-with-website.git
 ```
 2. Install the required packages:
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 3. Obtain a Hugging Face API token from the [Hugging Face website](https://huggingface.co/settings/tokens) and provide it as an input in the Streamlit app.
 
