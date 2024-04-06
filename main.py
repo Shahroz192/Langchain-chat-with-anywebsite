@@ -5,10 +5,10 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import streamlit as st
-from getpass import getpass
+import os 
 
 
-HUGGINGFACEHUB_API_TOKEN=getpass()
+HUGGINGFACEHUB_API_TOKEN=os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 
 repo_id = "mistralai/Mistral-7B-v0.1"
 
