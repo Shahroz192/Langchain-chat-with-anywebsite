@@ -1,4 +1,4 @@
-from langchain_community.llms import ollama
+from langchain_community.llms import Ollama
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import WebBaseLoader
@@ -9,7 +9,7 @@ import streamlit as st
 
 # Set up local llm
 def get_llm():
-    return ollama(model="qwen2:0.5b")
+    return Ollama(model="qwen2:0.5b")
 
 
 # Get links from the provided text
@@ -30,8 +30,7 @@ def get_chunks(docs):
 # Get embeddings for the chunks
 def get_embeddings(chunks):
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
-    )  # Ensure correct model is specified
+        model_name="sentence-transformers/all-MiniLM-L6-v2") 
     docsearch = FAISS.from_documents(chunks, embeddings)
     return docsearch
 
@@ -44,7 +43,7 @@ def get_answer(query, docsearch, llm):
         chain_type="stuff",
         retriever=retriever,
     )
-    answer = qa.run(query)
+    answer = qa.invoke(query)
     return answer
 
 
