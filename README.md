@@ -1,7 +1,6 @@
 # Website Chat
 
-Website Chat is a Streamlit application that allows you to ask questions about a website and get answers based on the information available on the website. It uses Hugging Face's Mistral-7B-v0.1 language model for question-answering and FAISS for document embedding and retrieval.
-
+Website Chat is a Streamlit application that allows you to ask questions about a website and get answers based on the information available on the website. It uses the OLLAMA language model from Anthropic for question-answering and FAISS for document embedding and retrieval.
 
 ## Why I Built This Project
 
@@ -14,7 +13,7 @@ By combining the power of LLMs with the ability to extract and process informati
 - Extract information from a given website URL
 - Split the information into chunks for efficient processing
 - Generate embeddings for the chunks using Hugging Face Embeddings
-- Answer user queries using a RetrievalQA chain with Hugging Face's Mistral-7B-v0.1 language model
+- Answer user queries using a RetrievalQA chain with the OLLAMA language model
 
 ## Requirements
 
@@ -22,7 +21,6 @@ By combining the power of LLMs with the ability to extract and process informati
 - Streamlit
 - langchain
 - langchain-community
-- Hugging Face API token
 
 ## Installation
 
@@ -34,7 +32,6 @@ git clone https://github.com/Shahroz192/chat-with-website.git
 ```
 pip install -r requirements.txt
 ```
-3. Obtain a Hugging Face API token from the [Hugging Face website](https://huggingface.co/settings/tokens) and provide it as an input in the Streamlit app.
 
 ## Usage
 
@@ -42,10 +39,89 @@ pip install -r requirements.txt
 ```
 streamlit run app.py
 ```
-2. Enter your Hugging Face API token in the .env file.
-3. Enter the URL of the website you want to ask questions about in sidebar.
-4. Ask a question about the website in the input field.
-5. The app will display the answer based on the information available on the website.
+2. Enter the URL of the website you want to ask questions about in the sidebar.
+3. Ask a question about the website in the input field.
+4. The app will display the answer based on the information available on the website.
+
+
+## Code Overview
+
+### Setting up the Local LLM
+```python
+from langchain_community.llms import Ollama
+
+def get_llm():
+    return Ollama(model="qwen2:0.5b")
+```
+
+### Getting Links from the Provided Text
+```python
+from langchain_community.document_loaders import WebBaseLoader
+
+def get_links(url):
+    docs = WebBaseLoader(url).load()
+    return docs
+```
+
+### Splitting Documents into Chunks
+```python
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+def get_chunks(docs):
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    chunks = text_splitter.split_documents(docs)
+    return chunks
+```
+
+### Getting Embeddings for the Chunks
+```python
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+
+def get_embeddings(chunks):
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    docsearch = FAISS.from_documents(chunks, embeddings)
+    return docsearch
+```
+
+### Getting Answer for the Given Query
+```python
+from langchain.chains import RetrievalQA
+
+def get_answer(query, docsearch, llm):
+    retriever = docsearch.as_retriever()
+    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
+    answer = qa.invoke(query)
+    return answer
+```
+
+### Streamlit App
+```python
+import streamlit as st
+
+def app():
+    st.set_page_config(page_title="Website Chat", page_icon=":robot_face:")
+    st.title("Chat with Website")
+    link = st.sidebar.text_input("Enter website URL")
+    if link:
+        try:
+            llm = get_llm()
+            docs = get_links(link)
+            chunks = get_chunks(docs)
+            docsearch = get_embeddings(chunks)
+            st.header("Ask a question about the website")
+            query = st.text_input("Enter your question:")
+            if query:
+                answer = get_answer(query, docsearch, llm)
+                st.write(answer)
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+    else:
+        st.warning("Please enter a valid website URL.")
+
+if __name__ == "__main__":
+    app()
+```
 
 ## Limitations
 
@@ -59,5 +135,7 @@ This project is licensed under the MIT License.
 ## Acknowledgments
 
 - [Streamlit](https://streamlit.io/) for building the app interface.
-- [Hugging Face](https://huggingface.co/) for providing the language model and embedding services.
+- [Anthropic](https://www.anthropic.com/) for providing the OLLAMA language model.
 - [Langchain](https://github.com/hwchase17/langchain) and [Langchain-community](https://github.com/hwchase17/langchain-community) for providing the tools and utilities for building the app.
+
+
