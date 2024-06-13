@@ -3,4 +3,5 @@ langchain_community
 transformers
 sentence_transformers
 streamlit
+ollama
 faiss_cpu

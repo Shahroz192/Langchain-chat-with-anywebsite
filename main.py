@@ -1,28 +1,22 @@
-from langchain_community.llms import HuggingFaceEndpoint
+from langchain_community.llms import ollama
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import streamlit as st
-import os 
 
 
-HUGGINGFACEHUB_API_TOKEN=os.environ.get("HUGGINGFACEHUB_API_TOKEN")
-
-repo_id = "mistralai/Mistral-7B-v0.1"
-
-
-# Set up Hugging Face LLM
-def get_llm(api_token):
-    return HuggingFaceEndpoint(
-        repo_id=repo_id, temperature=0.5, token=api_token
-    )
+# Set up local llm
+def get_llm():
+    return ollama(model="qwen2:0.5b")
 
 
 # Get links from the provided text
-def get_links(text):
-    docs = WebBaseLoader(text).load()
+def get_links(url):
+    docs = WebBaseLoader(
+        url
+    ).load()  # Assuming the WebBaseLoader can handle URLs directly
     return docs
 
 
@@ -35,7 +29,9 @@ def get_chunks(docs):
 
 # Get embeddings for the chunks
 def get_embeddings(chunks):
-    embeddings = HuggingFaceEmbeddings()
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )  # Ensure correct model is specified
     docsearch = FAISS.from_documents(chunks, embeddings)
     return docsearch
 
@@ -56,25 +52,23 @@ def get_answer(query, docsearch, llm):
 def app():
     st.set_page_config(page_title="Website Chat", page_icon=":robot_face:")
     st.title("Chat with Website")
-    if HUGGINGFACEHUB_API_TOKEN:
-        llm = get_llm(HUGGINGFACEHUB_API_TOKEN)
-        link = st.sidebar.text_input("Enter website URL")
-        if link:
-            try:
-                docs = get_links(link)
-                chunks = get_chunks(docs)
-                docsearch = get_embeddings(chunks)
-                st.header("Ask a question about the website")
-                query = st.text_input("Enter your question:")
-                if query:
-                    answer = get_answer(query, docsearch, llm)
-                    st.write(answer)
-            except Exception as e:
-                st.error(f"An error occurred: {e}")
-        else:
-            st.warning("Please enter a valid website URL.")
+    link = st.sidebar.text_input("Enter website URL")
+    if link:
+        try:
+            llm = get_llm()
+            docs = get_links(link)
+            chunks = get_chunks(docs)
+            docsearch = get_embeddings(chunks)
+            st.header("Ask a question about the website")
+            query = st.text_input("Enter your question:")
+            if query:
+                answer = get_answer(query, docsearch, llm)
+                st.write(answer)
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
     else:
-        st.warning("Please provide a valid Hugging Face API token.")
+        st.warning("Please enter a valid website URL.")
+
 
 if __name__ == "__main__":
     app()
