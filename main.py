@@ -14,9 +14,7 @@ def get_llm():
 
 # Get links from the provided text
 def get_links(url):
-    docs = WebBaseLoader(
-        url
-    ).load()  # Assuming the WebBaseLoader can handle URLs directly
+    docs = WebBaseLoader(url).load()
     return docs
 
 
@@ -30,7 +28,8 @@ def get_chunks(docs):
 # Get embeddings for the chunks
 def get_embeddings(chunks):
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2") 
+        model_name="sentence-transformers/all-MiniLM-L6-v2"
+    )
     docsearch = FAISS.from_documents(chunks, embeddings)
     return docsearch
 
