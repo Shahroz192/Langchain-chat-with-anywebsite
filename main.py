@@ -1,18 +1,21 @@
-from langchain_community.llms import Ollama
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import streamlit as st
+import getpass
+import os
+
+if "GOOGLE_API_KEY" not in os.environ:
+    os.environ["GOOGLE_API_KEY"] = getpass.getpass("Enter your Google AI API key: ")
 
 
-# Set up local llm
 def get_llm():
-    return Ollama(model="qwen2:0.5b")
+    return ChatGoogleGenerativeAI(model="gemini-2.0-flash",)
 
 
-# Get links from the provided text
 def get_links(url):
     docs = WebBaseLoader(url).load()
     return docs
